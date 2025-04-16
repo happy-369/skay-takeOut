@@ -1,1 +1,0 @@
-# skay-takeOut
