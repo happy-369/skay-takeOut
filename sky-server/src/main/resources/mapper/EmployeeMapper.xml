@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
 <mapper namespace="com.sky.mapper.EmployeeMapper">
+
+    <select id="pageQuery" resultType="com.sky.entity.Employee">
+        select * from employee
+        <!-- where 标签可自动处理第一个 and 的语法问题 -->
+        <where>
+            <!-- 动态条件：当 name 不为空时，拼接模糊查询 -->
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!--
+        员工信息更新语句
+        说明：
+        - 接收一个 Employee 对象作为参数
+        - 根据其 id 进行条件更新
+        - 动态判断每个字段是否为空，只有不为空的字段才会被更新
+        - 使用 <set> 标签可自动处理多余逗号
+    -->
+    <update id="update" parameterType="Employee">
+        update employee
+        <set> <!-- set 标签会自动去掉最后一个逗号 -->
+            <!-- 如果 name 不为空，则更新 name 字段 -->
+            <if test ="name != null">name = #{name},</if>
+            <if test ="username != null">username = #{username},</if>
+            <if test ="password != null">password = #{password},</if>
+            <if test ="phone != null">phone = #{phone},</if>
+            <if test ="sex != null">sex = #{sex},</if>
+            <if test ="idNumber != null">id_Number = #{idNumber},</if>
+            <if test ="updateTime != null">update_Time = #{updateTime},</if>
+            <if test ="updateUser != null">update_User = #{updateUser},</if>
+            <if test ="status != null">status = #{status},</if>
+        </set>
+        <!-- where 条件：只更新指定 id 的那一条记录 -->
+        where id = #{id}
+    </update>
+
 </mapper>
